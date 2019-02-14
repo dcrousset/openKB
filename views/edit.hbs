@@ -47,6 +47,8 @@
                         {{#each topics}}
                             <option
                                     {{#each ../result.kb_topics}}
+                                        thisId="{{this}}"
+                                        ..thisId="{{../this._id}}"
                                         {{select_state this ../this._id}}
                                     {{/each}}
                                     value="{{this._id}}">
