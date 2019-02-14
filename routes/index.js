@@ -1520,18 +1520,23 @@ router.get('/files', common.restrict, function (req, res){
 
 // insert form
 router.get('/insert', common.restrict, function (req, res){
-    res.render('insert', {
-        title: 'Insert new',
-        session: req.session,
-        kb_title: common.clear_session_value(req.session, 'kb_title'),
-        kb_body: common.clear_session_value(req.session, 'kb_body'),
-        kb_keywords: common.clear_session_value(req.session, 'kb_keywords'),
-        kb_permalink: common.clear_session_value(req.session, 'kb_permalink'),
-        message: common.clear_session_value(req.session, 'message'),
-        message_type: common.clear_session_value(req.session, 'message_type'),
-        editor: true,
-        helpers: req.handlebars,
-        config: config
+    var db = req.app.db;
+
+    common.dbQuery(db.topics, undefined, {name: -1}, 1000, function (err, topics) {
+        res.render('insert', {
+            title: 'Insert new',
+            topics: topics,
+            session: req.session,
+            kb_title: common.clear_session_value(req.session, 'kb_title'),
+            kb_body: common.clear_session_value(req.session, 'kb_body'),
+            kb_keywords: common.clear_session_value(req.session, 'kb_keywords'),
+            kb_permalink: common.clear_session_value(req.session, 'kb_permalink'),
+            message: common.clear_session_value(req.session, 'message'),
+            message_type: common.clear_session_value(req.session, 'message_type'),
+            editor: true,
+            helpers: req.handlebars,
+            config: config
+        });
     });
 });
 

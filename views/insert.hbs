@@ -31,6 +31,22 @@
                     <label for="editor">{{__ "Article body"}} (Markdown) *</label>
                     <textarea id="editor" minlength="5" name="frm_kb_body" data-provide="markdown" data-hidden-buttons="cmdPreview" data-iconlibrary="fa" class="form-control" required>{{kb_body}}</textarea>
                 </div>
+
+                <div class="form-group">
+                    <label>{{__ "Topics"}}</label>
+                    <select multiple class="form-control" id="frm_kb_topics" name="frm_kb_topics">
+                        {{#each topics}}
+                            <option
+                                {{#each ../result.kb_topics}}
+                                    {{select_state this ../this._id}}
+                                {{/each}}
+                                    value="{{this._id}}">
+                                {{this.name}}
+                            </option>
+                        {{/each}}
+                    </select>
+                    <span class="small">Debug:{{result.kb_topics}}</span>
+                </div>
             </div>
             <div class="col-xs-12 col-md-6 col-lg-6">
                 <div class="form-group" id="preview-wrapper">

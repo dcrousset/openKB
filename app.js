@@ -93,7 +93,9 @@ handlebars = handlebars.create({
             return'';
         },
         select_state: function (value, option){
-            if( value.toString() === option.toString() ){
+            if( option ) option = option.toString();
+
+            if( value === option ){
                 return'selected';
             }return'';
         },
