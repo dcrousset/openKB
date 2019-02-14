@@ -310,6 +310,7 @@ if(config.settings.database.type === 'embedded'){
     // setup the db's
     var db = new Nedb();
     db = {};
+    db.topics = new Nedb({filename: path.join(__dirname, '/data/topics.db'), autoload: true});
     db.users = new Nedb({filename: path.join(__dirname, '/data/users.db'), autoload: true});
     db.kb = new Nedb({filename: path.join(__dirname, '/data/kb.db'), autoload: true});
     db.votes = new Nedb({filename: path.join(__dirname, '/data/votes.db'), autoload: true});
@@ -337,6 +338,7 @@ if(config.settings.database.type === 'embedded'){
         }
 
         // setup the collections
+        db.topics = db.collection('topics');
         db.users = db.collection('users');
         db.kb = db.collection('kb');
         db.votes = db.collection('votes');

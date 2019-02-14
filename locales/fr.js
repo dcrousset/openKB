@@ -1,4 +1,6 @@
 {
+	"Topic": "Rubrique",
+	"Topics": "Rubriques",
 	"Toggle navigation": "Basculer la navigation",
 	"Users": "Utilisateurs",
 	"New": "Nouveau",
@@ -172,10 +174,15 @@
 	"Versions": "Versions",
 	"Edit reason": "Modifier la raison",
 	"Previous versions": "Versions précédentes",
-	"Topic": "Sujet",
 	"Suggestion successfully processed": "Suggestion traitée avec succès",
 	"Style": "Style",
 	"Visible state": "Visible state",
 	"Public": "Public",
-	"Private": "Private"
+	"Private": "Privé",
+	"New topic": "Nouvelle rubrique",
+	"Topic edit": "Edit rubrique",
+	"Name": "Nom",
+	"Topic updated.": "Rebrique mise à jour.",
+	"Not found": "Non trouvé",
+	"Topic inserted": "Rubrique ajoutée"
 }

@@ -1,0 +1,30 @@
+<div class="col-md-12">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<ol class="breadcrumb">
+	  			<li><a href="{{app_context}}/">{{__ "Home"}}</a></li>
+	 			<li class="active">{{__ "Topics"}}</li>
+			</ol>
+			<h1>{{__ "Topics"}} <span class="pull-right"><a href="{{app_context}}/topics/new" class="btn btn-primary">{{__ "New topic"}}</a></span></h1>
+			<ul class="list-group">
+				{{#each topics}}
+					<li class="list-group-item">
+                        <strong>{{__ "Topic"}}:</strong> {{this.name}}
+				  		<span class="pull-right">
+                            {{#is_an_admin ../session.is_admin}}
+                                <a href="{{app_context}}/topic/edit/{{this._id}}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                <a href="{{app_context}}/topic/delete/{{this._id}}" onclick="return confirm('{{__ "Are you sure you want to delete?"}}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                            {{/is_an_admin}}
+						</span>
+                        {{#if this.permalink}}
+                            <h5>
+                                Permalink :
+                                <a href="topic/{{this.permalink}}" target="_blank">topic/{{this.permalink}}</a>
+                            </h5>
+                        {{/if}}
+					</li>
+				{{/each}}
+			</ul>
+		</div>
+	</div>
+</div>

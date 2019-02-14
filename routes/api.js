@@ -3,6 +3,45 @@ var router = express.Router();
 var common = require('./common');
 var config = common.read_config();
 
+
+router.post('/api/topic/:id', function(req, res){
+    var db = req.app.db;
+
+    common.dbQuery(db.topics, {permalink: req.params.id}, null, null, function (err, topicsForPerma) {
+        var topicId;
+        if (topicsForPerma && topicsForPerma.length)
+            topicId = topicsForPerma[0]._id;
+        else
+            topicId = req.params.id;
+
+        common.dbQuery(db.kb, {
+            kb_topics: topicId,
+            kb_published: 'true',
+            kb_versioned_doc: {$ne: true}
+        }, null, null, function (err, results) {
+            if( err || !results || !results.length ){
+                res.status(400).json({message: 'Topic not found'});
+            }
+            else {
+                var lArticles = [];
+                results.forEach( function( aRes ){
+                    lArticles.push({
+                        title : aRes.kb_title,
+                        id: aRes._id,
+                        lastUpdated : aRes.kb_last_updated
+                    })
+                });
+                res.status(200).json( lArticles );
+            }
+
+        });
+    });
+
+
+
+});
+
+
 // validate the permalink
 router.post('/api/getArticleJson', function(req, res){
     var db = req.app.db;

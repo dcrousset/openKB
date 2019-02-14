@@ -11,6 +11,13 @@ var config = common.read_config();
 
 var appDir = path.dirname(require('require-main-filename')());
 
+router.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
 // The homepage of the site
 router.get('/', common.restrict, function (req, res, next){
     var db = req.app.db;
@@ -29,20 +36,23 @@ router.get('/', common.restrict, function (req, res, next){
     // get the top results based on sort order
     common.dbQuery(db.kb, {kb_published: 'true'}, sortBy, config.settings.num_top_results, function (err, top_results){
         common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
-            res.render('index', {
-                title: 'openKB',
-                user_page: true,
-                homepage: true,
-                top_results: top_results,
-                featured_results: featured_results,
-                session: req.session,
-                message: common.clear_session_value(req.session, 'message'),
-                message_type: common.clear_session_value(req.session, 'message_type'),
-                config: config,
-                current_url: req.protocol + '://' + req.get('host') + req.app_context,
-                fullUrl: req.protocol + '://' + req.get('host') + req.originalUrl,
-                helpers: req.handlebars,
-                show_footer: 'show_footer'
+            common.dbQuery(db.topics, undefined, {name:1}, 1000, function (err, topics) {
+                res.render('index', {
+                    title: 'openKB',
+                    user_page: true,
+                    homepage: true,
+                    top_results: top_results,
+                    featured_results: featured_results,
+                    topics: topics,
+                    session: req.session,
+                    message: common.clear_session_value(req.session, 'message'),
+                    message_type: common.clear_session_value(req.session, 'message_type'),
+                    config: config,
+                    current_url: req.protocol + '://' + req.get('host') + req.app_context,
+                    fullUrl: req.protocol + '://' + req.get('host') + req.originalUrl,
+                    helpers: req.handlebars,
+                    show_footer: 'show_footer'
+                });
             });
         });
     });
@@ -384,16 +394,19 @@ router.get('/edit/:id', common.restrict, function (req, res){
         }
 
         common.dbQuery(db.kb, {kb_parent_id: req.params.id}, {kb_last_updated: -1}, 20, function (err, versions){
-            res.render('edit', {
-                title: 'Edit article',
-                result: result,
-                versions: versions,
-                session: req.session,
-                message: common.clear_session_value(req.session, 'message'),
-                message_type: common.clear_session_value(req.session, 'message_type'),
-                config: config,
-                editor: true,
-                helpers: req.handlebars
+            common.dbQuery(db.topics, undefined, {name: -1}, 1000, function (err, topics) {
+                res.render('edit', {
+                    title: 'Edit article',
+                    result: result,
+                    versions: versions,
+                    topics: topics,
+                    session: req.session,
+                    message: common.clear_session_value(req.session, 'message'),
+                    message_type: common.clear_session_value(req.session, 'message_type'),
+                    config: config,
+                    editor: true,
+                    helpers: req.handlebars
+                });
             });
         });
     });
@@ -567,6 +580,11 @@ router.post('/save_kb', common.restrict, function (req, res){
     var lunr_index = req.app.index;
     var kb_featured = req.body.frm_kb_featured === 'on' ? 'true' : 'false';
 
+    var kb_topics = req.body.frm_kb_topics;
+    if( kb_topics && !Array.isArray( kb_topics ) )
+        // s'assure de mettre dans une liste
+        kb_topics = [kb_topics];
+
     // if empty, remove the comma and just have a blank string
     var keywords = req.body.frm_kb_keywords.replace(/<(?:.|\n)*?>/gm, '');
     if(common.safe_trim(keywords) === ','){
@@ -585,6 +603,7 @@ router.post('/save_kb', common.restrict, function (req, res){
             req.session.kb_keywords = req.body.frm_kb_keywords;
             req.session.kb_permalink = req.body.frm_kb_permalink;
             req.session.kb_featured = kb_featured;
+            req.session.kb_topics = kb_topics;
             req.session.kb_seo_title = req.body.frm_kb_seo_title;
             req.session.kb_seo_description = req.body.frm_kb_seo_description;
             req.session.kb_edit_reason = req.body.frm_kb_edit_reason;
@@ -621,6 +640,7 @@ router.post('/save_kb', common.restrict, function (req, res){
                         kb_password: req.body.frm_kb_password,
                         kb_permalink: req.body.frm_kb_permalink,
                         kb_featured: kb_featured,
+                        kb_topics: kb_topics,
                         kb_seo_title: req.body.frm_kb_seo_title,
                         kb_seo_description: req.body.frm_kb_seo_description,
                         kb_visible_state: req.body.frm_kb_visible_state
@@ -675,6 +695,7 @@ router.post('/save_kb', common.restrict, function (req, res){
                                 kb_password: req.body.frm_kb_password,
                                 kb_permalink: req.body.frm_kb_permalink,
                                 kb_featured: kb_featured,
+                                kb_topics: kb_topics,
                                 kb_seo_title: req.body.frm_kb_seo_title,
                                 kb_seo_description: req.body.frm_kb_seo_description
                             };
@@ -773,6 +794,82 @@ router.get('/users/new', common.restrict, function (req, res){
         helpers: req.handlebars
     });
 });
+
+
+
+
+
+
+
+// topics
+router.get('/topics', common.restrict, function (req, res){
+    // only allow admin
+    if(req.session.is_admin !== 'true'){
+        res.render('error', {message: 'Access denied', helpers: req.handlebars, config: config});
+        return;
+    }
+
+    var db = req.app.db;
+    common.dbQuery(db.topics, {}, null, null, function (err, topics){
+        res.render('topics', {
+            title: 'Topics',
+            topics: topics,
+            config: config,
+            is_admin: req.session.is_admin,
+            helpers: req.handlebars,
+            session: req.session,
+            message: common.clear_session_value(req.session, 'message'),
+            message_type: common.clear_session_value(req.session, 'message_type')
+        });
+    });
+});
+
+// topics
+router.get('/topic/edit/:id', common.restrict, function (req, res){
+    var db = req.app.db;
+    db.topics.findOne({_id: common.getId(req.params.id)}, function (err, topic){
+        res.render('topic_edit', {
+            title: 'Topic edit',
+            topic: topic,
+            session: req.session,
+            message: common.clear_session_value(req.session, 'message'),
+            message_type: common.clear_session_value(req.session, 'message_type'),
+            helpers: req.handlebars,
+            config: config
+        });
+    });
+});
+
+// topics
+router.get('/topics/new', common.restrict, function (req, res){
+    // only allow admin
+    if(req.session.is_admin !== 'true'){
+        res.render('error', {message: 'Access denied', helpers: req.handlebars, config: config});
+        return;
+    }
+
+    res.render('topic_new', {
+        title: 'Topic - New',
+        session: req.session,
+        message: common.clear_session_value(req.session, 'message'),
+        message_type: common.clear_session_value(req.session, 'message_type'),
+        config: config,
+        helpers: req.handlebars
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // kb list
 router.get('/articles', common.restrict, function (req, res){
@@ -956,6 +1053,118 @@ router.post('/user_update', common.restrict, function (req, res){
             });
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+// insert a topic
+router.post('/topic_insert', common.restrict, function (req, res){
+    var db = req.app.db;
+    var url = require('url');
+
+
+    // sets up the document
+    var doc = {
+        name: req.body.name,
+        permalink: req.body.permalink
+    };
+
+    // check for existing topic
+    db.topics.findOne({'name': req.body.name}, function (err, topic){
+        if(topic){
+            // user already exists with that email address
+            console.error('Failed to insert user, possibly already exists: ' + err);
+            req.session.message = req.i18n.__('A topic with that name already exists');
+            req.session.message_type = 'danger';
+            res.redirect(req.app_context + '/topics/new');
+        }else{
+            // topic is ok to be used.
+            db.topics.insert(doc, function (err, doc){
+                // show the view
+                if(err){
+                    console.error('Failed to insert topic: ' + err);
+                    req.session.message = req.i18n.__('Topic exists');
+                    req.session.message_type = 'danger';
+                    res.redirect(req.app_context + '/topic/edit/' + doc._id);
+                }else{
+                    req.session.message = req.i18n.__('Topic inserted');
+                    req.session.message_type = 'success';
+                    res.redirect(req.app_context + '/Topics');
+                }
+            });
+        }
+    });
+});
+
+// update a topic
+router.post('/topic_update', common.restrict, function (req, res){
+    var db = req.app.db;
+
+    // get the topic we want to update
+    db.topics.findOne({_id: common.getId(req.body.topic_id)}, function (err, topic){
+
+        // create the update doc
+        var update_doc = {
+            name: req.body.name,
+            permalink : req.body.permalink
+        }
+
+        db.topics.update({_id: common.getId(req.body.topic_id)},
+            {
+                $set: update_doc
+            }, {multi: false}, function (err, numReplaced){
+                if(err){
+                    console.error('Failed updating topic: ' + err);
+                    req.session.message = req.i18n.__('Failed to update topic');
+                    req.session.message_type = 'danger';
+                    res.redirect(req.app_context + '/topic/edit/' + req.body.topic_id);
+                }else{
+                    // show the view
+                    req.session.message = req.i18n.__('Topic updated.');
+                    req.session.message_type = 'success';
+                    res.redirect(req.app_context + '/topic/edit/' + req.body.topic_id);
+                }
+            });
+    });
+});
+
+
+
+// delete topic
+router.get('/topic/delete/:id', common.restrict, function (req, res){
+    var db = req.app.db;
+    // remove the article
+    if(req.session.is_admin === 'true'){
+        db.topics.remove({_id: common.getId(req.params.id)}, {}, function (err, numRemoved){
+            req.session.message = req.i18n.__('Topic deleted.');
+            req.session.message_type = 'success';
+            res.redirect(req.app_context + '/topics');
+        });
+    }else{
+        req.session.message = req.i18n.__('Access denied.');
+        req.session.message_type = 'danger';
+        res.redirect(req.app_context + '/topics');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
 
 // login form
 router.get('/login', function (req, res){
@@ -1326,13 +1535,51 @@ router.get('/insert', common.restrict, function (req, res){
     });
 });
 
-// redirect home with a null topic
-router.get('/topic', function(req, res){
-    res.redirect('/');
+// search topic
+router.get('/topic/:id', function(req, res){
+    var db = req.app.db;
+    common.config_expose(req.app);
+
+    common.dbQuery(db.topics, {permalink: req.params.id}, null, null, function (err, topicsForPerma){
+        var topicId;
+        if( topicsForPerma && topicsForPerma.length )
+            topicId = topicsForPerma[0]._id;
+        else
+            topicId = req.params.id;
+
+        common.dbQuery(db.kb, {kb_topics: topicId, kb_published: 'true', kb_versioned_doc: {$ne: true}}, null, null, function (err, results) {
+            common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
+                var lCurrTopic = topics.find(function (aTopic) {
+                    return aTopic._id === topicId;
+                });
+
+                if( !lCurrTopic )
+                    lCurrTopic = { name: req.i18n.__('Not found')};
+
+                res.render('index', {
+                    title: req.i18n.__('Topic') + ":" + lCurrTopic.name,
+                    search_results: results,
+                    user_page: true,
+                    session: req.session,
+                    topics: topics,
+                    topic_term: lCurrTopic.name,
+                    featured_results: [],
+                    routeType: 'topic',
+                    message: common.clear_session_value(req.session, 'message'),
+                    message_type: common.clear_session_value(req.session, 'message_type'),
+                    search_term: '',
+                    config: config,
+                    helpers: req.handlebars,
+                    show_footer: 'show_footer'
+                });
+            });
+        });
+    });
+
 });
 
 // search kb's
-router.get(['/search/:tag', '/topic/:tag'], common.restrict, function (req, res){
+router.get(['/search/:tag', '/keyword/:tag'], common.restrict, function (req, res){
     var db = req.app.db;
     common.config_expose(req.app);
     var search_term = req.params.tag;

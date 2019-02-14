@@ -174,5 +174,17 @@
 	"Previous versions": "Previous versions",
 	"Topic": "Topic",
 	"Suggestion successfully processed": "Suggestion successfully processed",
-	"Style": "Style"
+	"Style": "Style",
+	"Visible state": "Visible state",
+	"Public": "Public",
+	"Private": "Private",
+	"Topics": "Topics",
+	"New topic": "New topic",
+	"Topic inserted": "Topic inserted",
+	"User is admin?": "User is admin?",
+	"Topic edit": "Topic edit",
+	"Name": "Name",
+	"Topic updated.": "Topic updated.",
+	"Topic deleted.": "Topic deleted.",
+	"User deleted.": "User deleted."
 }
