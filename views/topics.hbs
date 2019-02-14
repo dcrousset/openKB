@@ -9,7 +9,7 @@
 			<ul class="list-group">
 				{{#each topics}}
 					<li class="list-group-item">
-                        <strong>{{__ "Topic"}}:</strong> {{this.name}}
+                        <strong>{{__ "Topic"}}:</strong> {{this.name}} {{this._id}}
 				  		<span class="pull-right">
                             {{#is_an_admin ../session.is_admin}}
                                 <a href="{{app_context}}/topic/edit/{{this._id}}"><i class="fa fa-pencil" aria-hidden="true"></i></a>

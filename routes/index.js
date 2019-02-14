@@ -51,7 +51,7 @@ router.get('/', common.restrict, function (req, res, next){
                     current_url: req.protocol + '://' + req.get('host') + req.app_context,
                     fullUrl: req.protocol + '://' + req.get('host') + req.originalUrl,
                     helpers: req.handlebars,
-                    show_footer: 'show_footer'
+                    show_footer: ''
                 });
             });
         });
@@ -168,7 +168,7 @@ router.get('/' + config.settings.route_name + '/:id/version', common.restrict, f
                 message: common.clear_session_value(req.session, 'message'),
                 message_type: common.clear_session_value(req.session, 'message_type'),
                 helpers: req.handlebars,
-                show_footer: 'show_footer'
+                show_footer: ''
             });
         });
     });
@@ -262,7 +262,7 @@ router.get('/' + config.settings.route_name + '/:id', common.restrict, function 
                         message: common.clear_session_value(req.session, 'message'),
                         message_type: common.clear_session_value(req.session, 'message_type'),
                         helpers: req.handlebars,
-                        show_footer: 'show_footer'
+                        show_footer: ''
                     });
                 });
             });
@@ -1190,7 +1190,7 @@ router.get('/login', function (req, res){
                 config: config,
                 message: common.clear_session_value(req.session, 'message'),
                 message_type: common.clear_session_value(req.session, 'message_type'),
-                show_footer: 'show_footer',
+                show_footer: '',
                 helpers: req.handlebars
             });
         }else{
@@ -1214,7 +1214,7 @@ router.get('/setup', function (req, res){
                 config: config,
                 message: common.clear_session_value(req.session, 'message'),
                 message_type: common.clear_session_value(req.session, 'message_type'),
-                show_footer: 'show_footer',
+                show_footer: '',
                 helpers: req.handlebars
             });
         }else{
@@ -1570,7 +1570,7 @@ router.get('/topic/:id', function(req, res){
                     search_term: '',
                     config: config,
                     helpers: req.handlebars,
-                    show_footer: 'show_footer'
+                    show_footer: ''
                 });
             });
         });
@@ -1625,7 +1625,7 @@ router.get(['/search/:tag', '/keyword/:tag'], common.restrict, function (req, re
                 search_term: search_term,
                 config: config,
                 helpers: req.handlebars,
-                show_footer: 'show_footer'
+                show_footer: ''
             });
         });
     });
@@ -1671,7 +1671,7 @@ router.post('/search', common.restrict, function (req, res){
                 message_type: common.clear_session_value(req.session, 'message_type'),
                 config: config,
                 helpers: req.handlebars,
-                show_footer: 'show_footer'
+                show_footer: ''
             });
         });
     });
