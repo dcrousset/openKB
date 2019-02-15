@@ -16,7 +16,7 @@ router.post('/api/topic/:id', function(req, res){
 
         common.dbQuery(db.kb, {
             kb_topics: topicId,
-            kb_visible_state: 'public',
+            kb_visible_state: {$ne: 'private'},
             kb_published: 'true',
             kb_versioned_doc: {$ne: true}
         }, null, null, function (err, results) {
