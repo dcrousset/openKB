@@ -18,6 +18,25 @@ router.use(function(req, res, next) {
 });
 
 
+function getSearchKbWhereFeatured( req ){
+    return getSearchKbWhere( req, {kb_featured: 'true'} );
+}
+
+function getSearchKbWhere( req, aMergeWith ){
+    aMergeWith = aMergeWith || {};
+
+    aMergeWith.kb_published = 'true';
+    if( !req.session.user ){
+        aMergeWith.kb_visible_state = {$ne : 'private'};
+    }
+
+    return aMergeWith;
+}
+
+
+
+
+
 // The homepage of the site
 router.get('/', common.restrict, function (req, res, next){
     var db = req.app.db;
@@ -34,8 +53,8 @@ router.get('/', common.restrict, function (req, res, next){
     sortBy[sortByField] = sortByOrder;
 
     // get the top results based on sort order
-    common.dbQuery(db.kb, {kb_published: 'true'}, sortBy, config.settings.num_top_results, function (err, top_results){
-        common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
+    common.dbQuery(db.kb, getSearchKbWhere( req ), sortBy, config.settings.num_top_results, function (err, top_results){
+        common.dbQuery(db.kb, getSearchKbWhereFeatured( req ), sortBy, featuredCount, function (err, featured_results){
             common.dbQuery(db.topics, undefined, {name:1}, 1000, function (err, topics) {
                 res.render('index', {
                     title: config.settings.website_title,
@@ -90,7 +109,7 @@ router.post('/search_api', function (req, res){
         }
     });
 
-    common.dbQuery(db.kb, {_id: {$in: index_id_array}, kb_published: 'true', kb_versioned_doc: {$ne: true}}, null, null, function (err, results){
+    common.dbQuery(db.kb, getSearchKbWhere( req, {_id: {$in: index_id_array}, kb_versioned_doc: {$ne: true}}), null, null, function (err, results){
         if(err){
             return res.status(400).json({});
         }
@@ -154,7 +173,7 @@ router.get('/' + config.settings.route_name + '/:id/version', common.restrict, f
 
     db.kb.findOne({_id: common.getId(req.params.id)}, function (err, result){
         // show the view
-        common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
+        common.dbQuery(db.kb, getSearchKbWhereFeatured( req ), sortBy, featuredCount, function (err, featured_results){
             res.render('kb', {
                 title: result.kb_title,
                 result: result,
@@ -248,7 +267,7 @@ router.get('/' + config.settings.route_name + '/:id', common.restrict, function 
                 req.session.pw_validated = null;
 
                 // show the view
-                common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
+                common.dbQuery(db.kb, getSearchKbWhereFeatured(req), sortBy, featuredCount, function (err, featured_results){
                     common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
                         res.render('kb', {
                             title: result.kb_title,
@@ -1561,11 +1580,10 @@ router.get('/topic/:id', function(req, res){
         else
             topicId = req.params.id;
 
-        common.dbQuery(db.kb, {
+        common.dbQuery(db.kb, getSearchKbWhere( req, {
                 kb_topics: topicId,
-                kb_published: 'true',
                 kb_versioned_doc: {$ne: true}
-            }, null, null, function (err, results) {
+            }), null, null, function (err, results) {
             common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
                 var lCurrTopic = topics.find(function (aTopic) {
                     return aTopic._id.toString() === topicId;
@@ -1629,8 +1647,8 @@ router.get(['/search/:tag', '/keyword/:tag'], common.restrict, function (req, re
     sortBy[sortByField] = sortByOrder;
 
     // we search on the lunr indexes
-    common.dbQuery(db.kb, {_id: {$in: lunr_id_array}, kb_published: 'true', kb_versioned_doc: {$ne: true}}, null, null, function (err, results){
-        common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
+    common.dbQuery(db.kb, getSearchKbWhere( req, {_id: {$in: lunr_id_array}, kb_versioned_doc: {$ne: true}}), null, null, function (err, results){
+        common.dbQuery(db.kb, getSearchKbWhereFeatured( req ), sortBy, featuredCount, function (err, featured_results){
             res.render('index', {
                 title: 'Search results: ' + search_term,
                 search_results: results,
@@ -1676,8 +1694,8 @@ router.post('/search', common.restrict, function (req, res){
     sortBy[sortByField] = sortByOrder;
 
     // we search on the lunr indexes
-    common.dbQuery(db.kb, {_id: {$in: lunr_id_array}, kb_published: 'true', kb_versioned_doc: {$ne: true}}, null, null, function (err, results){
-        common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
+    common.dbQuery(db.kb, getSearchKbWhere( req, {_id: {$in: lunr_id_array}, kb_versioned_doc: {$ne: true}}), null, null, function (err, results){
+        common.dbQuery(db.kb, getSearchKbWhereFeatured( req ), sortBy, featuredCount, function (err, featured_results){
             res.render('index', {
                 title: 'Search results: ' + search_term,
                 search_results: results,
