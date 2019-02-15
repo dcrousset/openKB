@@ -1,0 +1,10 @@
+{{#if topics}}
+    <div style="margin-top: 30px;">
+        <ul class="list-group">
+            <li class="list-group-item list-group-heading">{{__ "Topics"}}</li>
+            {{#each topics}}
+                <li class="list-group-item"><h5><b><a href="{{app_context}}/topic/{{this._id}}">{{this.name}}</a></b></h5></li>
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}

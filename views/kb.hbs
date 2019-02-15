@@ -22,18 +22,8 @@
 <div class="row">
     {{#ifBoth config.settings.show_featured_articles config.settings.show_featured_in_article}}
         <div class="col-md-2 col-md-offset-1 col-lg-2 col-lg-offset-1">
-            <div style="margin-top: 30px;">
-                <ul class="list-group">
-                    <li class="list-group-item list-group-heading">{{__ "Featured articles"}}</li>
-                    {{#each featured_results}}
-                        {{#if this.kb_permalink}}
-                            <li class="list-group-item"><h5><a href="{{app_context}}/{{@root.config.settings.route_name}}/{{this.kb_permalink}}">{{this.kb_title}}</a></h5></li>
-                        {{else}}
-                            <li class="list-group-item"><h5><a href="{{app_context}}/{{@root.config.settings.route_name}}/{{this._id}}">{{this.kb_title}}</a></h5></li>
-                        {{/if}}
-                    {{/each}}
-                </ul>
-            </div>
+            {{> asideFeaturedList}}
+            {{> asideTopicList}}
         </div>
         <div class="col-md-8 col-lg-8">
     {{else}}
@@ -105,9 +95,6 @@
                 </div>
             </div>
 		{{/if}}
-		<h5 class="keywords">
-			{{{split_keywords result.kb_keywords}}}
-		</h5>
 	</div>
     <input type="hidden" id="doc_id" value={{result._id}}>
 </div>

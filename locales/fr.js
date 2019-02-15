@@ -23,7 +23,7 @@
 	"Recent": "Récent",
 	"Are you sure you want to delete this article?": "Voulez-vous vraiment supprimer cet article?",
 	"Search": "Rechercher",
-	"Featured articles": "Articles vedette",
+	"Featured articles": "En vedette",
 	"Top articles": "Articles populaires",
 	"Suggest": "Suggérer",
 	"Login": "Connecter",

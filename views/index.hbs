@@ -22,32 +22,8 @@
 <div class="row">
     {{#if config.settings.show_featured_articles}}
         <div class="col-md-2 col-md-offset-1 col-lg-2 col-lg-offset-1">
-            {{#if featured_results}}
-            <div style="margin-top: 30px;">
-                <ul class="list-group">
-                    <li class="list-group-item list-group-heading">{{__ "Featured articles"}}</li>
-                    {{#each featured_results}}
-                        {{#if this.kb_permalink}}
-                            <li class="list-group-item"><h5><a href="{{app_context}}/{{@root.config.settings.route_name}}/{{this.kb_permalink}}">{{this.kb_title}}</a></h5></li>
-                        {{else}}
-                            <li class="list-group-item"><h5><a href="{{app_context}}/{{@root.config.settings.route_name}}/{{this._id}}">{{this.kb_title}}</a></h5></li>
-                        {{/if}}
-                    {{/each}}
-                </ul>
-            </div>
-            {{/if}}
-
-            {{#if topics}}
-            <div style="margin-top: 30px;">
-                <ul class="list-group">
-                    <li class="list-group-item list-group-heading">{{__ "Topics"}}</li>
-                    {{#each topics}}
-                       <li class="list-group-item"><h5><b><a href="{{app_context}}/topic/{{this._id}}">{{this.name}}</a></b></h5></li>
-                    {{/each}}
-                </ul>
-            </div>
-            {{/if}}
-
+            {{> asideFeaturedList}}
+            {{> asideTopicList}}
         </div>
         <div class="col-md-8 col-lg-8">
     {{else}}

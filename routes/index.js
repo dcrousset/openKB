@@ -38,7 +38,7 @@ router.get('/', common.restrict, function (req, res, next){
         common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
             common.dbQuery(db.topics, undefined, {name:1}, 1000, function (err, topics) {
                 res.render('index', {
-                    title: 'openKB',
+                    title: config.settings.website_title,
                     user_page: true,
                     homepage: true,
                     top_results: top_results,
@@ -154,7 +154,7 @@ router.get('/' + config.settings.route_name + '/:id/version', common.restrict, f
 
     db.kb.findOne({_id: common.getId(req.params.id)}, function (err, result){
         // show the view
-        common.dbQuery(db.kb, {kb_published: 'true', kb_versioned_doc: {$eq: true}}, sortBy, featuredCount, function (err, featured_results){
+        common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
             res.render('kb', {
                 title: result.kb_title,
                 result: result,
@@ -248,21 +248,24 @@ router.get('/' + config.settings.route_name + '/:id', common.restrict, function 
                 req.session.pw_validated = null;
 
                 // show the view
-                common.dbQuery(db.kb, {kb_published: 'true'}, sortBy, featuredCount, function (err, featured_results){
-                    res.render('kb', {
-                        title: result.kb_title,
-                        result: result,
-                        user_page: true,
-                        kb_body: common.sanitizeHTML(markdownit.render(result.kb_body)),
-                        featured_results: featured_results,
-                        config: config,
-                        session: req.session,
-                        current_url: req.protocol + '://' + req.get('host') + req.app_context,
-                        fullUrl: req.protocol + '://' + req.get('host') + req.originalUrl,
-                        message: common.clear_session_value(req.session, 'message'),
-                        message_type: common.clear_session_value(req.session, 'message_type'),
-                        helpers: req.handlebars,
-                        show_footer: ''
+                common.dbQuery(db.kb, {kb_published: 'true', kb_featured: 'true'}, sortBy, featuredCount, function (err, featured_results){
+                    common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
+                        res.render('kb', {
+                            title: result.kb_title,
+                            result: result,
+                            topics: topics,
+                            user_page: true,
+                            kb_body: common.sanitizeHTML(markdownit.render(result.kb_body)),
+                            featured_results: featured_results,
+                            config: config,
+                            session: req.session,
+                            current_url: req.protocol + '://' + req.get('host') + req.app_context,
+                            fullUrl: req.protocol + '://' + req.get('host') + req.originalUrl,
+                            message: common.clear_session_value(req.session, 'message'),
+                            message_type: common.clear_session_value(req.session, 'message_type'),
+                            helpers: req.handlebars,
+                            show_footer: ''
+                        });
                     });
                 });
             });
@@ -417,12 +420,18 @@ router.post('/insert_kb', common.restrict, function (req, res){
     var db = req.app.db;
     var lunr_index = req.app.index;
 
+    var kb_topics = req.body.frm_kb_topics;
+    if( kb_topics && !Array.isArray( kb_topics ) )
+        // s'assure de mettre dans une liste
+        kb_topics = [kb_topics];
+
     var doc = {
         kb_permalink: req.body.frm_kb_permalink,
         kb_title: req.body.frm_kb_title,
         kb_body: req.body.frm_kb_body,
         kb_published: req.body.frm_kb_published,
         kb_keywords: req.body.frm_kb_keywords,
+        kb_topics: kb_topics,
         kb_published_date: new Date(),
         kb_last_updated: new Date(),
         kb_last_update_user: req.session.users_name + ' - ' + req.session.user,
@@ -1555,7 +1564,7 @@ router.get('/topic/:id', function(req, res){
         common.dbQuery(db.kb, {kb_topics: topicId, kb_published: 'true', kb_versioned_doc: {$ne: true}}, null, null, function (err, results) {
             common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
                 var lCurrTopic = topics.find(function (aTopic) {
-                    return aTopic._id === topicId;
+                    return aTopic._id.toString() === topicId;
                 });
 
                 if( !lCurrTopic )
