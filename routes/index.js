@@ -1557,7 +1557,7 @@ router.get('/topic/:id', function(req, res){
     common.dbQuery(db.topics, {permalink: req.params.id}, null, null, function (err, topicsForPerma){
         var topicId;
         if( topicsForPerma && topicsForPerma.length )
-            topicId = topicsForPerma[0]._id;
+            topicId = topicsForPerma[0]._id.toString();
         else
             topicId = req.params.id;
 
