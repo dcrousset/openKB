@@ -1561,7 +1561,11 @@ router.get('/topic/:id', function(req, res){
         else
             topicId = req.params.id;
 
-        common.dbQuery(db.kb, {kb_topics: topicId, kb_published: 'true', kb_versioned_doc: {$ne: true}}, null, null, function (err, results) {
+        common.dbQuery(db.kb, {
+                kb_topics: topicId,
+                kb_published: 'true',
+                kb_versioned_doc: {$ne: true}
+            }, null, null, function (err, results) {
             common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
                 var lCurrTopic = topics.find(function (aTopic) {
                     return aTopic._id.toString() === topicId;
