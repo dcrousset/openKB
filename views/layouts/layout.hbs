@@ -83,6 +83,8 @@
     <script src="{{app_context}}/javascripts/sanitizer.min.js"></script>
     <script src="{{app_context}}/javascripts/jpushmenu{{config.settings.env}}.js"></script>
     <script src="{{app_context}}/javascripts/openKB{{config.settings.env}}.js"></script>
+    <style>{{{config.settings.style.cssCustom}}}</style>
+
     {{#ifCond user_page '===' true}}
       <style>{{{simpleCSS config}}}</style>
       {{#if config.settings.google_analytics}}

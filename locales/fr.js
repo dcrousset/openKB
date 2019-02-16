@@ -184,5 +184,7 @@
 	"Name": "Nom",
 	"Topic updated.": "Rebrique mise à jour.",
 	"Not found": "Non trouvé",
-	"Topic inserted": "Rubrique ajoutée"
+	"Topic inserted": "Rubrique ajoutée",
+	"Custom CSS": "Custom CSS",
+	"css syntax code for all user pages, so be cautious !": "css syntax code for all user pages, so be cautious !"
 }

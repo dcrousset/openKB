@@ -51,7 +51,8 @@
             "cssButtonTextColor": "",
             "cssLinkColor": "",
             "cssTextColor": "",
-            "cssFontFamily": ""
+            "cssFontFamily": "",
+            "cssCustom": "img[alt~=\"center\"] {   margin: auto; }\r\nimg[alt~=\"border\"] {   border:solid 2px black; }"
         }
     }
 }

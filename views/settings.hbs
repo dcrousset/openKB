@@ -381,6 +381,16 @@
                                         <input type="text" class="form-control" name="style.cssFontFamily" value="{{config.settings.style.cssFontFamily}}"/>
                                     </div>
                                 </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label" for="links_blank_page">{{__ "Custom CSS"}}:</label>
+                                        <textarea rows="5" class="form-control" name="style.cssCustom">{{config.settings.style.cssCustom}}</textarea>
+                                        <p class="help-block">
+                                            {{__ "css syntax code for all user pages, so be cautious !"}}.
+                                        </p>
+                                    </div>
+                                </div>
+
                             </div>
                             <!-- Simple styling -->
                         </div>
