@@ -1,4 +1,13 @@
 $(document).ready(function(){
+    $(function() {
+        $('form').areYouSure(
+            {
+                message: 'It looks like you have been editing something. '
+                + 'If you leave before saving, your changes will be lost.'
+            }
+        );
+    });
+
     // add the responsive image class to all images
     $('.body_text img').each(function(){
         $(this).addClass('img-responsive');
@@ -106,9 +115,10 @@ $(document).ready(function(){
     }
 
     if($('#editor').length){
-        // setup editors
+        // setup editors  https://www.npmjs.com/package/simplemde
         var simplemde = new SimpleMDE({
             element: $('#editor')[0],
+            forceSync:true,
             spellChecker: config.enable_spellchecker,
             toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'table', 'horizontal-rule', 'code', 'guide']
         });
