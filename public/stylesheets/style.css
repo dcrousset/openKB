@@ -8,17 +8,17 @@
 		padding-bottom: 20px; 
 	} 
 	
-	.view_count, #preview-wrapper {
+	.view_count {
 		display: none;
 	}
     
-    #editor-wrapper {
-        padding-top: 20px;
-    }
+    /*#editor-wrapper {*/
+        /*padding-top: 20px;*/
+    /*}*/
 
-    .permalink_buttons{
-        padding-top: 15px;
-    }
+    /*.permalink_buttons{*/
+        /*padding-top: 15px;*/
+    /*}*/
 
     .input-lg {
         height: 50px;

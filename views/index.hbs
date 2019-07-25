@@ -1,10 +1,6 @@
 <div class="row">
 	<form action="{{app_context}}/search" id="search_form" method="post">
-        {{#if config.settings.show_featured_articles}}
-		    <div class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1 search_bar">
-        {{else}}
-            <div class="col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 search_bar">
-        {{/if}}
+        <div class="col-sm-10 col-sm-offset-1 search_bar">
 			<div class="input-group">
 				<input type="text" name="frm_search" id="frm_search" autocomplete="off" class="form-control input-lg" placeholder="{{__ "Search the knowledge base"}}">
 				<span class="input-group-btn">
@@ -21,13 +17,13 @@
 </div>
 <div class="row">
     {{#if config.settings.show_featured_articles}}
-        <div class="col-md-2 col-md-offset-1 col-lg-2 col-lg-offset-1">
+        <div class="col-sm-3 hidden-xs">
             {{> asideFeaturedList}}
             {{> asideTopicList}}
         </div>
-        <div class="col-md-8 col-lg-8">
+        <div class="col-sm-9">
     {{else}}
-        <div class="col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
+        <div class="col-sm-12">
     {{/if}}
 		{{#if search_results}}
 			<div style="margin-top: 30px;">
@@ -110,4 +106,9 @@
 			</div>
 		{{/if}}
 	</div>
+    <div class="col-sm-12 visible-xs">
+        {{> asideFeaturedList}}
+        {{> asideTopicList}}
+    </div>
+
 </div>

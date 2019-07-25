@@ -269,22 +269,50 @@ router.get('/' + config.settings.route_name + '/:id', common.restrict, function 
                 // show the view
                 common.dbQuery(db.kb, getSearchKbWhereFeatured(req), sortBy, featuredCount, function (err, featured_results){
                     common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
-                        res.render('kb', {
-                            title: result.kb_title,
-                            result: result,
-                            topics: topics,
-                            user_page: true,
-                            kb_body: common.sanitizeHTML(markdownit.render(result.kb_body)),
-                            featured_results: featured_results,
-                            config: config,
-                            session: req.session,
-                            current_url: req.protocol + '://' + req.get('host') + req.app_context,
-                            fullUrl: req.protocol + '://' + req.get('host') + req.originalUrl,
-                            message: common.clear_session_value(req.session, 'message'),
-                            message_type: common.clear_session_value(req.session, 'message_type'),
-                            helpers: req.handlebars,
-                            show_footer: ''
+                        var hashTopics = {};
+                        topics.forEach( function(aTopic){
+                            hashTopics[aTopic._id] = aTopic;
                         });
+
+                        result.kb_topics_full = [];
+                        if( result.kb_topics ){
+                            result.kb_topics.forEach( function(kb_topic){
+                                result.kb_topics_full.push({
+                                    id:kb_topic,
+                                    name:hashTopics[kb_topic].name,
+                                });
+                            });
+
+                            common.dbQuery(db.kb, getSearchKbWhere( req, {
+                                kb_topics: {$in: result.kb_topics},
+                                _id: {$ne: result._id},
+                                kb_versioned_doc: {$ne: true}
+                            }), null, null, function (err, otherKbs) {
+                                result.otherKbs = otherKbs;
+                                render();
+                            });
+                        }
+                        else
+                            render();
+
+                        function render(){
+                            res.render('kb', {
+                                title: result.kb_title,
+                                result: result,
+                                topics: topics,
+                                user_page: true,
+                                kb_body: common.sanitizeHTML(markdownit.render(result.kb_body)),
+                                featured_results: featured_results,
+                                config: config,
+                                session: req.session,
+                                current_url: req.protocol + '://' + req.get('host') + req.app_context,
+                                fullUrl: req.protocol + '://' + req.get('host') + req.originalUrl,
+                                message: common.clear_session_value(req.session, 'message'),
+                                message_type: common.clear_session_value(req.session, 'message_type'),
+                                helpers: req.handlebars,
+                                show_footer: ''
+                            });
+                        }
                     });
                 });
             });
@@ -423,6 +451,7 @@ router.get('/edit/:id', common.restrict, function (req, res){
                     versions: versions,
                     topics: topics,
                     session: req.session,
+                    current_url: req.protocol + '://' + req.get('host') + req.app_context,
                     message: common.clear_session_value(req.session, 'message'),
                     message_type: common.clear_session_value(req.session, 'message_type'),
                     config: config,
@@ -1555,10 +1584,12 @@ router.get('/insert', common.restrict, function (req, res){
             title: 'Insert new',
             topics: topics,
             session: req.session,
-            kb_title: common.clear_session_value(req.session, 'kb_title'),
-            kb_body: common.clear_session_value(req.session, 'kb_body'),
-            kb_keywords: common.clear_session_value(req.session, 'kb_keywords'),
-            kb_permalink: common.clear_session_value(req.session, 'kb_permalink'),
+            result:{
+                kb_title: common.clear_session_value(req.session, 'kb_title'),
+                kb_keywords: common.clear_session_value(req.session, 'kb_keywords'),
+                kb_permalink: common.clear_session_value(req.session, 'kb_permalink'),
+                kb_body: common.clear_session_value(req.session, 'kb_body')
+            },
             message: common.clear_session_value(req.session, 'message'),
             message_type: common.clear_session_value(req.session, 'message_type'),
             editor: true,

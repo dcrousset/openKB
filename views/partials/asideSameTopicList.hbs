@@ -1,0 +1,14 @@
+{{#if result.otherKbs.length}}
+    <div style="margin-top: 30px;">
+        <ul class="list-group">
+            <li class="list-group-item list-group-heading"><b>{{__ "Linked articles"}}</b></li>
+            {{#each result.otherKbs}}
+                {{#if this.kb_permalink}}
+                    <li class="list-group-item"><h5><a href="{{app_context}}/{{@root.config.settings.route_name}}/{{this.kb_permalink}}"><b>{{this.kb_title}}</b></a></h5></li>
+                {{else}}
+                    <li class="list-group-item"><h5><a href="{{app_context}}/{{@root.config.settings.route_name}}/{{this._id}}"><b>{{this.kb_title}}</b></a></h5></li>
+                {{/if}}
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}

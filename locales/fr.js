@@ -186,5 +186,9 @@
 	"Not found": "Non trouvé",
 	"Topic inserted": "Rubrique ajoutée",
 	"Custom CSS": "Custom CSS",
-	"css syntax code for all user pages, so be cautious !": "css syntax code for all user pages, so be cautious !"
+	"css syntax code for all user pages, so be cautious !": "css syntax code for all user pages, so be cautious !",
+	"A user with that email does not exist.": "Ce code utilisateur n'existe pas.",
+	"Linked articles": "Articles liés",
+	"Save to see preview link": "Sauvegardez pour obtenir le lien de l'aperçu",
+	"See preview": "Voir l'aperçu de"
 }

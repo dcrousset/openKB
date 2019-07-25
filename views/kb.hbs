@@ -1,10 +1,6 @@
 <div class="row">
 	<form action="{{app_context}}/search" id="search_form" method="post">
-		{{#ifBoth config.settings.show_featured_articles config.settings.show_featured_in_article}}
-		    <div class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1 search_bar">
-        {{else}}
-            <div class="col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 search_bar">
-        {{/ifBoth}}
+        <div class="col-sm-10 col-sm-offset-1 search_bar">
 			<div class="input-group">
 				<input type="text" name="frm_search" id="frm_search" autocomplete="off" class="form-control input-lg" placeholder="{{__ "Search the knowledge base"}}">
 				<span class="input-group-btn">
@@ -21,15 +17,27 @@
 </div>
 <div class="row">
     {{#ifBoth config.settings.show_featured_articles config.settings.show_featured_in_article}}
-        <div class="col-md-2 col-md-offset-1 col-lg-2 col-lg-offset-1">
+        <div class="col-sm-3 hidden-xs">
+            {{> asideSameTopicList}}
             {{> asideFeaturedList}}
             {{> asideTopicList}}
         </div>
-        <div class="col-md-8 col-lg-8">
+        <div class="col-sm-9">
     {{else}}
-        <div class="col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
+        <div class="col-sm-12">
     {{/ifBoth}}
-		<h1 style="padding-bottom: 25px;padding-top: 15px;">{{result.kb_title}}</h1>
+        <h5 style="padding-bottom: 0;padding-top: 15px">
+
+        {{#ifCond result.kb_topics_full.length '>' 0}}
+            Rubriques :
+        {{/ifCond}}
+
+        {{#each result.kb_topics_full}}
+            <a href="{{app_context}}/topic/{{this.id}}">{{this.name}}</a>
+        {{/each}}
+
+        </h5>
+		<h1 style="padding-bottom: 25px;padding-top: 0;">{{result.kb_title}}</h1>
 		<div class="body_text">
             {{{kb_body}}}
         </div>
@@ -96,5 +104,11 @@
             </div>
 		{{/if}}
 	</div>
+    <div class="col-sm-12 visible-xs">
+        {{> asideSameTopicList}}
+        {{> asideFeaturedList}}
+        {{> asideTopicList}}
+    </div>
+
     <input type="hidden" id="doc_id" value={{result._id}}>
 </div>

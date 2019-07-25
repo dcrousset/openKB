@@ -1,88 +1,9 @@
-<div class="col-xs-12 col-md-12">
+<div class="col-xs-12">
     <form method="post" id="edit_form" action="{{app_context}}/save_kb" data-toggle="validator">
-        <div class="row">
-            <div class="col-xs-12 col-lg-6">
-                <div class="form-group">
-                    <label for="frm_kb_title">{{__ "Article title"}} *</label><br/>
-                    <input type="text" name="frm_kb_title" id="frm_kb_title" class="form-control input-normal" minlength="5" maxlength="200" value="{{result.kb_title}}" required/>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-2">
-                <label for="frm_kb_password">{{__ "Password"}}</label><br/>
-                <input id="frm_kb_password" class="form-control" name="frm_kb_password" type="text" value="{{result.kb_password}}" />
-            </div>
-            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-2">
-                <label for="frm_kb_published">{{__ "Status"}}</label><br/>
-                <select class="form-control" id="frm_kb_published" name="frm_kb_published">
-                    {{#ifCond result.kb_published "==" "true"}}
-                        <option value="true" selected>{{__ "Published"}}</option>
-                        <option value="false">{{__ "Draft"}}</option>
-                    {{else}}
-                        <option value="true">{{__ "Published"}}</option>
-                        <option value="false" selected>{{__ "Draft"}}</option>
-                    {{/ifCond}}
-                </select>
-            </div>
-            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-2">
-                <label for="">&nbsp;</label><br/>
-                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                    {{#ifCond config.settings.article_versioning '===' true}}
-                    <a href="#" class="btn btn-warning toggle-menu menu-left push-body"><i class="fa fa-code-fork" aria-hidden="true"></i></a>
-                    {{/ifCond}}
-                    <a href="#" class="btn btn-default toggle-menu menu-right push-body"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                    <a href="#" id="frm_edit_kb_save" class="btn btn-success editor_btn_action"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12 col-md-6 col-lg-6">
-                <div class="form-group" id="editor-wrapper">
-                    <label for="editor">{{__ "Article body"}} (Markdown) *</label>
-                    <textarea id="editor" minlength="5" name="frm_kb_body" data-provide="markdown" data-hidden-buttons="cmdPreview" data-iconlibrary="fa" class="form-control" required>{{{result.kb_body}}}</textarea>
-                </div>
 
-                <div class="form-group">
-                    <label>{{__ "Topics"}}</label>
-                    <select multiple class="form-control" id="frm_kb_topics" name="frm_kb_topics">
-                        {{#each topics}}
-                            <option
-                                    {{#each ../result.kb_topics}}
-                                        {{select_state this ../this._id }}
-                                    {{/each}}
-                                    value="{{this._id}}">
-                                {{this.name}}
-                            </option>
-                        {{/each}}
-                    </select>
-                    <span class="small">Debug:{{result.kb_topics}}</span>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-6 col-lg-6">
-                <div class="form-group" id="preview-wrapper">
-                    <label for="preview">{{__ "Preview"}}</label>
-                    <div id="preview" name="preview" class="form-control" rows="10"></div>
-                </div>
-            </div>
-        </div>
-        <footer>
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="frm_kb_keywords" id="frm_kb_keywords" placeholder="{{__ "keyword"}}" value="{{result.kb_keywords}}">
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-                    <input type="text" class="form-control" name="frm_kb_permalink" id="frm_kb_permalink" placeholder="{{__ "permalink"}}" value="{{result.kb_permalink}}">
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-                    <div class="btn-group btn-group-justified pull-right permalink_buttons" role="group" aria-label="...">
-                        <a href="#" class="btn btn-success" id="validate_permalink" type="button">{{__ "Validate"}}</a>
-                        <a href="#" class="btn btn-warning" id="generate_permalink" type="button">{{__ "Generate"}}</a>
-                        <a href="#" class="btn btn-info disabled" id="generate_permalink_from_title" type="button">{{__ "Slug from title"}}</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
+<!-- laisser sur la premiere colonne, sinon ajoute des espaces à chaque ligne de l'article !! -->
+{{> partialEditKB }}
+
         <input type="hidden" name="frm_kb_id" id="frm_kb_id" value="{{result._id}}" />
         <input type="hidden" id="frm_editor" value="true" />
 
@@ -126,7 +47,12 @@
         </nav>
         {{#ifCond config.settings.article_versioning '===' true}}
             <nav id="versionSidebar" class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" style="overflow-y: auto;">
-                <div class="cbp-spmenu-header"><div class="pull-left">{{__ "Versions"}}</div><button id="btnVersionMenu" class="btn btn-warning pull-right toggle-menu menu-left push-body"><i class="fa fa-code-fork" aria-hidden="true"></i></div></button>
+                <div class="cbp-spmenu-header">
+                    <div class="pull-left">{{__ "Versions"}}</div>
+                    <button id="btnVersionMenu" class="btn btn-warning pull-right toggle-menu menu-left push-body">
+                        <i class="fa fa-code-fork" aria-hidden="true"></i>
+                    </button>
+                </div>
                 <ul class="list-group list-group-sidemenu">
                     <li class="list-group-item">
                         <label for="frm_kb_edit_reason">{{__ "Edit reason"}}</label>

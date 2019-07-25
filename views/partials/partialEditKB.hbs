@@ -1,0 +1,107 @@
+<div class="row">
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label for="frm_kb_title">{{__ "Article title"}} *</label><br/>
+            <input type="text" name="frm_kb_title" id="frm_kb_title" class="form-control input-normal" minlength="5" maxlength="200" value="{{result.kb_title}}" required/>
+        </div>
+    </div>
+    <div class="col-xs-3">
+        <label for="frm_kb_published">{{__ "Status"}}</label><br/>
+        <select class="form-control" id="frm_kb_published" name="frm_kb_published">
+            {{#ifCond result.kb_published "==" "true"}}
+                <option value="true" selected>{{__ "Published"}}</option>
+                <option value="false">{{__ "Draft"}}</option>
+            {{else}}
+                <option value="true">{{__ "Published"}}</option>
+                <option value="false" selected>{{__ "Draft"}}</option>
+            {{/ifCond}}
+        </select>
+    </div>
+    <div class="col-xs-3">
+        <label for="">&nbsp;</label><br/>
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+            {{#ifCond config.settings.article_versioning '===' true}}
+                <a href="#" class="btn btn-warning toggle-menu menu-left push-body"><i class="fa fa-code-fork" aria-hidden="true"></i></a>
+            {{/ifCond}}
+            {{#if result._id}}
+                <a href="#" class="btn btn-default toggle-menu menu-right push-body"><i class="fa fa-cog" aria-hidden="true"></i></a>
+            {{/if}}
+            <a href="#" id="frm_edit_kb_save" class="btn btn-success editor_btn_action"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-6">
+        <div class="row form-group">
+            <div class="col-xs-6">
+                <input type="text" class="form-control" name="frm_kb_permalink" id="frm_kb_permalink" placeholder="{{__ "permalink"}}" value="{{result.kb_permalink}}">
+            </div>
+            <div class="col-xs-6">
+                <div class="btn-group btn-group-justified permalink_buttons" role="group" aria-label="...">
+                    <a href="#" class="btn btn-success" id="validate_permalink" type="button">{{__ "Validate"}}</a>
+                    <a href="#" class="btn btn-warning" id="generate_permalink" type="button">{{__ "Generate"}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                {{#if result.kb_permalink}}
+                    <a target="_blank" href="{{current_url}}/kb/{{result.kb_permalink}}">{{__ "See preview"}} <b>kb/{{result.kb_permalink}}</b></a>
+                {{else if result._id}}
+                    <a target="_blank" href="{{current_url}}/kb/{{result._id}}">{{__ "See preview"}} <b>kb/{{result._id}}</b></a>
+                {{else}}
+                    {{__ "Save to see preview link"}}
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label>{{__ "Topics"}}</label>
+            <select multiple class="form-control" id="frm_kb_topics" name="frm_kb_topics">
+                {{#each topics}}
+                    <option
+                        {{#each ../result.kb_topics}}
+                            {{select_state this ../this._id }}
+                        {{/each}}
+                            value="{{this._id}}">
+                        {{this.name}}
+                    </option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6">
+        <div class="form-group" id="editor-wrapper">
+            <label for="editor">{{__ "Article body"}} (Markdown) *</label>
+            <textarea id="editor" minlength="5" name="frm_kb_body"
+                      data-provide="markdown" data-hidden-buttons="cmdPreview"
+                      data-iconlibrary="fa" class="form-control" required>{{{result.kb_body}}}</textarea>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+        <div class="form-group" id="preview-wrapper">
+            <label for="preview">{{__ "Preview"}}</label>
+            <div id="preview" name="preview" class="form-control" rows="10"></div>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="form-group">
+                <label for="frm_kb_password">{{__ "Keywords"}}</label><br/>
+                <input type="text" class="form-control" name="frm_kb_keywords" id="frm_kb_keywords" value="{{result.kb_keywords}}">
+            </div>
+        </div>
+
+        <div class="col-xs-6">
+            <label for="frm_kb_password">{{__ "Password"}}</label><br/>
+            <input id="frm_kb_password" class="form-control" name="frm_kb_password" type="text" value="{{result.kb_password}}" />
+        </div>
+    </div>
+</footer>
+
