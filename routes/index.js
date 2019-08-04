@@ -451,7 +451,7 @@ router.get('/edit/:id', common.restrict, function (req, res){
         }
 
         common.dbQuery(db.kb, {kb_parent_id: req.params.id}, {kb_last_updated: -1}, 20, function (err, versions){
-            common.dbQuery(db.topics, undefined, {name: -1}, 1000, function (err, topics) {
+            common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
                 res.render('edit', {
                     title: 'Edit article',
                     result: result,
@@ -1586,7 +1586,7 @@ router.get('/files', common.restrict, function (req, res){
 router.get('/insert', common.restrict, function (req, res){
     var db = req.app.db;
 
-    common.dbQuery(db.topics, undefined, {name: -1}, 1000, function (err, topics) {
+    common.dbQuery(db.topics, undefined, {name:1}, 1000, function (err, topics) {
         res.render('insert', {
             title: 'Insert new',
             topics: topics,

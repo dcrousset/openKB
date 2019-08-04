@@ -14,7 +14,7 @@ Si changement de .js restart npm<br>
 ###Pour déployer sur serveur
  
 commit et push -> github<br>
-serveur : $docker/bin/openkb-install 
+serveur : $docker/bin/openkb-install -r 
 
 ### Si doit modif config.js :
 $docker/openkb-conf/*<br>
