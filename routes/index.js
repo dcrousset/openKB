@@ -268,7 +268,11 @@ router.get('/' + config.settings.route_name + '/:id', common.restrict, function 
 
                 // show the view
                 common.dbQuery(db.kb, getSearchKbWhereFeatured(req), sortBy, featuredCount, function (err, featured_results){
+
+                    // get all topic sorted by name
                     common.dbQuery(db.topics, undefined, {name: 1}, 1000, function (err, topics) {
+
+                        // create map of topics
                         var hashTopics = {};
                         topics.forEach( function(aTopic){
                             hashTopics[aTopic._id] = aTopic;
@@ -277,10 +281,13 @@ router.get('/' + config.settings.route_name + '/:id', common.restrict, function 
                         result.kb_topics_full = [];
                         if( result.kb_topics ){
                             result.kb_topics.forEach( function(kb_topic){
-                                result.kb_topics_full.push({
-                                    id:kb_topic,
-                                    name:hashTopics[kb_topic].name,
-                                });
+                                if( hashTopics[kb_topic] ){
+                                    // if topic exists, add to associated topics
+                                    result.kb_topics_full.push({
+                                        id:kb_topic,
+                                        name:hashTopics[kb_topic].name,
+                                    });
+                                }
                             });
 
                             common.dbQuery(db.kb, getSearchKbWhere( req, {
