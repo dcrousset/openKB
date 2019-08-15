@@ -37,9 +37,25 @@ router.post('/api/topic/:id', function(req, res){
 
         });
     });
+});
 
 
+router.post('/api/kb/:id', function(req, res){
+    var db = req.app.db;
 
+    db.kb.findOne({$or: [{_id: common.getId(req.params.id)}, {kb_permalink: req.params.id}], kb_versioned_doc: {$ne: true}}, function (err, result){
+        if( err || !result ){
+            res.status(400).json({message: 'Kb not found'});
+        }
+        else {
+            var lArticle = {
+                title : result.kb_title,
+                id: result._id,
+                lastUpdated : result.kb_last_updated
+            };
+            res.status(200).json( lArticle );
+        }
+    });
 });
 
 
