@@ -35,6 +35,29 @@ function getSearchKbWhere( req, aMergeWith ){
 
 
 
+function pushUrlParamsToCurrSession( req ){
+    req.session.urlParams = req.session.urlParams || {};
+
+    for( propName in req.query )
+        if( req.query.hasOwnProperty( propName ) )
+            req.session.urlParams[propName] = req.query[propName];
+}
+
+
+function addParamSessions( req, aBody ){
+    for( aParamName in req.session.urlParams ) {
+        var re = new RegExp( '{{'+aParamName+'}}', 'g');
+        aBody = aBody.replace( re, req.session.urlParams[aParamName] );
+    }
+
+    // Enleve tous les params pas trouvés
+    var re = new RegExp( '{{.*?}}', 'g');
+    aBody = aBody.replace( re, '' );
+
+
+    return aBody;
+}
+
 
 
 // The homepage of the site
@@ -42,6 +65,8 @@ router.get('/', common.restrict, function (req, res, next){
     var db = req.app.db;
     common.config_expose(req.app);
     var featuredCount = config.settings.featured_articles_count ? config.settings.featured_articles_count : 4;
+
+    pushUrlParamsToCurrSession( req );
 
     // set the template dir
     common.setTemplateDir('user', req);
@@ -178,7 +203,7 @@ router.get('/' + config.settings.route_name + '/:id/version', common.restrict, f
                 title: result.kb_title,
                 result: result,
                 user_page: true,
-                kb_body: common.sanitizeHTML(markdownit.render(result.kb_body)),
+                kb_body: common.sanitizeHTML(markdownit.render(addParamSessions(req, result.kb_body))),
                 featured_results: featured_results,
                 config: config,
                 session: req.session,
@@ -199,6 +224,8 @@ router.get('/' + config.settings.route_name + '/:id', common.restrict, function 
     var classy = require('../public/javascripts/markdown-it-classy');
     var markdownit = req.markdownit;
     markdownit.use(classy);
+
+    pushUrlParamsToCurrSession( req )
 
     var featuredCount = config.settings.featured_articles_count ? config.settings.featured_articles_count : 4;
 
@@ -308,7 +335,7 @@ router.get('/' + config.settings.route_name + '/:id', common.restrict, function 
                                 result: result,
                                 topics: topics,
                                 user_page: true,
-                                kb_body: common.sanitizeHTML(markdownit.render(result.kb_body)),
+                                kb_body: common.sanitizeHTML(markdownit.render(addParamSessions(req, result.kb_body))),
                                 featured_results: featured_results,
                                 config: config,
                                 session: req.session,
@@ -1611,6 +1638,8 @@ router.get('/topic/:id', function(req, res){
     var db = req.app.db;
     common.config_expose(req.app);
 
+    pushUrlParamsToCurrSession( req )
+
     common.dbQuery(db.topics, {permalink: req.params.id}, null, null, function (err, topicsForPerma){
         var topicId;
         if( topicsForPerma && topicsForPerma.length )
@@ -1664,6 +1693,8 @@ router.get(['/search/:tag', '/keyword/:tag'], common.restrict, function (req, re
     if(req.path.split('/')[1] === 'topic'){
         routeType = 'topic';
     }
+
+    pushUrlParamsToCurrSession( req )
 
     // we strip the ID's from the lunr index search
     var lunr_id_array = [];

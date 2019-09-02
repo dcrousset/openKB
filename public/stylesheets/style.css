@@ -3,6 +3,10 @@
 	color: #d9534f;
 }
 
+.badge-topic {
+    background: lightgray;
+}
+
 @media (max-width: 979px) { 
 	body { 
 		padding-bottom: 20px; 
@@ -30,7 +34,7 @@
 
     .btn-lg, .btn-group-lg>.btn {
         height: 50px;
-        padding-left: 0px 5px;
+        padding-left: 0px;
         font-size: 16px;
         line-height: .8;
         border-radius: 3px;

@@ -145,6 +145,20 @@ handlebars = handlebars.create({
                 return'/' + config.settings.app_context;
             }return'';
         },
+        globalCSS: function() {
+            if( !config.settings.config_all_dir )
+                config.settings.config_all_dir = 'config-all';
+
+            var globalConfigFile = path.join(__dirname, '.', config.settings.config_all_dir, 'config.json');
+
+            if(fs.existsSync( globalConfigFile ) === true){
+                var rawData = fs.readFileSync(globalConfigFile, 'utf8');
+                var loadedConfig = JSON.parse(rawData);
+                return loadedConfig.settings.style.cssCustom;
+            }
+            else
+                return "";
+        },
         simpleCSS: function(config){
             var cssString = '';
             if(typeof config.settings.style.cssHeaderBackgroundColor !== 'undefined' && config.settings.style.cssHeaderBackgroundColor !== ''){

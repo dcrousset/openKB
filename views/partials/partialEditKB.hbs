@@ -32,14 +32,14 @@
 </div>
 <div class="row">
     <div class="col-xs-6">
-        <div class="row form-group">
-            <div class="col-xs-6">
-                <input type="text" class="form-control" name="frm_kb_permalink" id="frm_kb_permalink" placeholder="{{__ "permalink"}}" value="{{result.kb_permalink}}">
-            </div>
-            <div class="col-xs-6">
-                <div class="btn-group btn-group-justified permalink_buttons" role="group" aria-label="...">
-                    <a href="#" class="btn btn-success" id="validate_permalink" type="button">{{__ "Validate"}}</a>
-                    <a href="#" class="btn btn-warning" id="generate_permalink" type="button">{{__ "Generate"}}</a>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="frm_kb_permalink" id="frm_kb_permalink" placeholder="{{__ "permalink"}}" value="{{result.kb_permalink}}">
+                    <span class="input-group-btn">
+                        <button class="btn btn-success" id="validate_permalink" type="button">{{__ "Validate"}}</button>
+                        <button class="btn btn-warning" id="generate_permalink" type="button">{{__ "Generate"}}</button>
+                    </span>
                 </div>
             </div>
         </div>

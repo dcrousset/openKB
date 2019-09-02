@@ -330,12 +330,42 @@ $(document).ready(function(){
         }
     });
 
+
+    $("#frm_kb_permalink").change( disableGenPermLink );
+    function disableGenPermLink() {
+        if( $("#frm_kb_permalink").length == 0 )
+            return;
+
+        var lValLink = $("#frm_kb_permalink").val();
+        if( lValLink && lValLink.length )
+            $('#generate_permalink').attr({
+                disabled:'disabled',
+                title:'Disponible lorsque le champ de lien permanent est vide'
+            });
+        else {
+            $('#generate_permalink').removeAttr("disabled" );
+            $('#generate_permalink').removeAttr("title" );
+        }
+    }
+    disableGenPermLink();
+
     // generates a random permalink
     $('#generate_permalink').click(function(){
-        var min = 100000;
-        var max = 999999;
-        var num = Math.floor(Math.random() * (max - min + 1)) + min;
-        $('#frm_kb_permalink').val(num);
+
+        var lPermLink = $('#frm_kb_title').val().toLowerCase()
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^a-zA-Z0-9._]+/g,'-') // Remove all non-word chars ( fix for UTF-8 chars )
+            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+            .replace(/^-+/, '')             // Trim - from start of text
+            .replace(/-+$/, '');            // Trim - from end of text
+
+        $('#frm_kb_permalink').val( lPermLink );
+
+        // var min = 100000;
+        // var max = 999999;
+        // var num = Math.floor(Math.random() * (max - min + 1)) + min;
+        // $('#frm_kb_permalink').val(num);
+        disableGenPermLink();
     });
 
     // function to slugify strings
