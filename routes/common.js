@@ -124,7 +124,7 @@ exports.restrict = function (req, res, next){
     var url_path = req.url;
 
     var lPosStartParam = url_path.indexOf('?');
-    if( lPosStartParam )
+    if( lPosStartParam > -1 )
         // Ne tiens pas compte des paramètres dans la vérfication de restriction
         url_path = url_path.substring( 0, lPosStartParam );
 
