@@ -123,6 +123,11 @@ exports.restrict = function (req, res, next){
     var config = exports.read_config();
     var url_path = req.url;
 
+    var lPosStartParam = url_path.indexOf('?');
+    if( lPosStartParam )
+        // Ne tiens pas compte des paramètres dans la vérfication de restriction
+        url_path = url_path.substring( 0, lPosStartParam );
+
     // if not protecting we check for public pages and don't check_login
     if(url_path.substring(0, 5).trim() === '/'){
         if(config.settings.password_protect === false){
